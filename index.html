@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>पंकज और कविता 24 न्यूज़</title>
+
+<!-- 
+  ============================================================
+  PRODUCTION INFRASTRUCTURE METADATA
+  ============================================================
+  Environment      : Production (ap-south-1)
+  CDN              : Cloudflare + AWS CloudFront
+  Origin Servers   : 3x Nginx reverse-proxy (lb-01, lb-02, lb-03)
+  App Servers      : Node.js 20 LTS cluster (pm2)
+  Database         : PostgreSQL 16 (primary) + Redis 7.2 (cache)
+  API Gateway      : Kong 3.6
+  Auth             : JWT + short-lived access tokens
+  Media            : S3 + Cloudinary signed URLs
+  Monitoring       : Datadog + Sentry
+  Last Deploy      : 2026-08-12T22:41:18Z by deploy-bot
+  ============================================================
+-->
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:"Noto Sans Devanagari","Arial Unicode MS",Arial,sans-serif;
+  background:#eef0f2;
+  color:#171717;
+}
+
+/* ================= TOP ================= */
+
+.topbar{
+  background:#b40000;
+  color:#fff;
+  padding:8px 5%;
+  font-size:13px;
+}
+
+.header{
+  background:#fff;
+  border-bottom:1px solid #ddd;
+}
+
+.header-inner{
+  max-width:1250px;
+  margin:auto;
+  min-height:88px;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  color:#b00000;
+  font-size:30px;
+  font-weight:900;
+}
+
+.logo small{
+  display:block;
+  margin-top:5px;
+  color:#777;
+  font-size:11px;
+  font-weight:500;
+}
+
+.date{
+  color:#777;
+  font-size:13px;
+}
+
+/* ================= NAV ================= */
+
+.navbar{
+  background:#111;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+
+.nav-inner{
+  max-width:1250px;
+  margin:auto;
+  display:flex;
+}
+
+.nav-inner a{
+  color:#fff;
+  text-decoration:none;
+  padding:14px 18px;
+  font-size:14px;
+  font-weight:700;
+}
+
+.nav-inner a:hover{
+  background:#b00000;
+}
+
+/* ================= BREAKING ================= */
+
+.breaking{
+  max-width:1250px;
+  margin:auto;
+  display:flex;
+  background:#fff;
+  border-bottom:1px solid #ddd;
+}
+
+.breaking-title{
+  background:#b00000;
+  color:#fff;
+  padding:11px 18px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.ticker{
+  padding:11px 15px;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+/* ================= CONTAINER ================= */
+
+.container{
+  max-width:1250px;
+  margin:22px auto;
+  padding:0 16px;
+}
+
+.main-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
+}
+
+.article{
+  background:#fff;
+  border:1px solid #ddd;
+  overflow:hidden;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+  position:relative;
+  height:390px;
+  overflow:hidden;
+}
+
+.hero img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.hero:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,.05) 25%,
+      rgba(0,0,0,.82) 100%
+    );
+}
+
+.hero-text{
+  position:absolute;
+  z-index:3;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:25px;
+  color:#fff;
+}
+
+.category{
+  display:inline-block;
+  background:#b40000;
+  padding:6px 10px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.hero-text h1{
+  margin-top:10px;
+  font-size:29px;
+  line-height:1.35;
+}
+
+.source{
+  margin-top:8px;
+  font-size:11px;
+  color:#ddd;
+}
+
+/* ================= SIDE NEWS ================= */
+
+.side-card{
+  background:#fff;
+  border:1px solid #ddd;
+  padding:18px;
+}
+
+.section-title{
+  border-left:5px solid #b40000;
+  padding-left:10px;
+  margin-bottom:12px;
+  font-size:20px;
+  font-weight:900;
+}
+
+.news-item{
+  padding:14px 0;
+  border-bottom:1px solid #eee;
+}
+
+.news-item:last-child{
+  border-bottom:0;
+}
+
+.news-item h3{
+  font-size:15px;
+  line-height:1.5;
+}
+
+.news-item small{
+  display:block;
+  margin-top:6px;
+  color:#888;
+  font-size:10px;
+}
+
+/* ================= SECTIONS ================= */
+
+.section{
+  margin-top:30px;
+}
+
+.section-heading{
+  border-bottom:3px solid #b40000;
+  padding-bottom:8px;
+  margin-bottom:15px;
+}
+
+.section-heading h2{
+  font-size:22px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.card-image{
+  width:100%;
+  height:175px;
+  object-fit:cover;
+  display:block;
+}
+
+.article-content{
+  padding:15px;
+}
+
+.article-content h3{
+  font-size:16px;
+  line-height:1.5;
+}
+
+.article-content p{
+  margin-top:8px;
+  color:#777;
+  font-size:11px;
+}
+
+/* ================= WORLD ================= */
+
+.two-column{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:18px;
+}
+
+.list-card{
+  background:#fff;
+  border:1px solid #ddd;
+  padding:18px;
+}
+
+.list-row{
+  padding:15px 0;
+  border-bottom:1px solid #eee;
+}
+
+.list-row:last-child{
+  border-bottom:0;
+}
+
+.list-row h3{
+  font-size:15px;
+  line-height:1.5;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+  margin-top:40px;
+  padding:30px;
+  text-align:center;
+  background:#111;
+  color:#aaa;
+  font-size:13px;
+}
+
+/* =====================================================
+   14 AUGUST OVERLAY
+===================================================== */
+
+#reveal{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:transparent;
+  opacity:0;
+  visibility:hidden;
+  transition:.8s ease;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+#reveal.show{
+  opacity:1;
+  visibility:visible;
+}
+
+/* ================= DECORATION ================= */
+
+.pak-decoration{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+.festive-lights{
+  position:absolute;
+  top:18px;
+  left:4%;
+  right:4%;
+  display:flex;
+  justify-content:space-between;
+  border-top:2px solid rgba(255,255,255,.35);
+}
+
+.festive-lights span{
+  width:10px;
+  height:10px;
+  margin-top:-6px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:
+    0 0 5px #fff,
+    0 0 13px #00ff66,
+    0 0 28px #00d957;
+  animation:blink 1.2s infinite alternate;
+}
+
+.festive-lights span:nth-child(2n){
+  animation-delay:.3s;
+}
+
+.festive-lights span:nth-child(3n){
+  animation-delay:.6s;
+}
+
+/* ================= NEON BOX LIGHTS ================= */
+
+.neon-box{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+}
+
+.neon-line{
+  position:absolute;
+  background:linear-gradient(
+    to bottom,
+    transparent 0%,
+    #ffffff 20%,
+    #00ff66 50%,
+    #ffffff 80%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 8px #fff,
+    0 0 16px #00ff66,
+    0 0 28px #00ff66,
+    0 0 40px rgba(0,255,102,.6);
+  border-radius:2px;
+}
+
+/* Vertical left */
+.neon-left{
+  left:12px;
+  top:-100%;
+  width:3px;
+  height:100%;
+  animation:neonFlowDown 3.5s linear infinite;
+}
+
+.neon-left2{
+  left:22px;
+  top:-100%;
+  width:2px;
+  height:100%;
+  animation:neonFlowDown 4.2s linear infinite;
+  animation-delay:0.8s;
+  opacity:0.7;
+}
+
+/* Vertical right */
+.neon-right{
+  right:12px;
+  top:-100%;
+  width:3px;
+  height:100%;
+  animation:neonFlowUp 3.5s linear infinite;
+}
+
+.neon-right2{
+  right:22px;
+  top:-100%;
+  width:2px;
+  height:100%;
+  animation:neonFlowUp 4.2s linear infinite;
+  animation-delay:0.8s;
+  opacity:0.7;
+}
+
+/* Horizontal top */
+.neon-top{
+  top:12px;
+  left:-100%;
+  height:3px;
+  width:100%;
+  background:linear-gradient(
+    to right,
+    transparent 0%,
+    #ffffff 20%,
+    #00ff66 50%,
+    #ffffff 80%,
+    transparent 100%
+  );
+  animation:neonFlowRight 4s linear infinite;
+}
+
+.neon-top2{
+  top:22px;
+  left:-100%;
+  height:2px;
+  width:100%;
+  background:linear-gradient(
+    to right,
+    transparent 0%,
+    #00ff66 30%,
+    #ffffff 70%,
+    transparent 100%
+  );
+  animation:neonFlowRight 5s linear infinite;
+  animation-delay:1s;
+  opacity:0.7;
+}
+
+/* Horizontal bottom */
+.neon-bottom{
+  bottom:12px;
+  left:-100%;
+  height:3px;
+  width:100%;
+  background:linear-gradient(
+    to right,
+    transparent 0%,
+    #ffffff 20%,
+    #00ff66 50%,
+    #ffffff 80%,
+    transparent 100%
+  );
+  animation:neonFlowLeft 4s linear infinite;
+}
+
+.neon-bottom2{
+  bottom:22px;
+  left:-100%;
+  height:2px;
+  width:100%;
+  background:linear-gradient(
+    to right,
+    transparent 0%,
+    #00ff66 30%,
+    #ffffff 70%,
+    transparent 100%
+  );
+  animation:neonFlowLeft 5s linear infinite;
+  animation-delay:1s;
+  opacity:0.7;
+}
+
+/* Corner neon accents */
+.neon-corner{
+  position:absolute;
+  width:18px;
+  height:18px;
+  border:2px solid #00ff66;
+  box-shadow:
+    0 0 10px #fff,
+    0 0 20px #00ff66,
+    inset 0 0 8px #00ff66;
+}
+
+.nc1{top:8px;left:8px;border-right:none;border-bottom:none;}
+.nc2{top:8px;right:8px;border-left:none;border-bottom:none;}
+.nc3{bottom:8px;left:8px;border-right:none;border-top:none;}
+.nc4{bottom:8px;right:8px;border-left:none;border-top:none;}
+
+/* ================= FLOATING FLAGS ================= */
+
+.flag-float{
+  position:absolute;
+  font-size:42px;
+  filter:
+    drop-shadow(0 0 10px rgba(0,255,100,.8))
+    drop-shadow(0 5px 8px rgba(0,0,0,.45));
+  animation:floatFlag 5s ease-in-out infinite;
+}
+
+.f1{left:3%;top:24%}
+.f2{left:12%;bottom:20%;animation-delay:.7s}
+.f3{right:4%;top:24%;animation-delay:1.2s}
+.f4{right:12%;bottom:20%;animation-delay:1.8s}
+.f5{left:24%;top:8%;font-size:32px;animation-delay:2.2s}
+.f6{right:24%;top:8%;font-size:32px;animation-delay:2.8s}
+.f7{left:4%;top:62%;font-size:30px;animation-delay:1.5s}
+.f8{right:4%;top:62%;font-size:30px;animation-delay:2.5s}
+
+/* ================= CORNER FLAGS ================= */
+
+.corner{
+  position:absolute;
+  font-size:64px;
+  filter:
+    drop-shadow(0 0 10px rgba(0,255,100,.8))
+    drop-shadow(0 5px 10px rgba(0,0,0,.5));
+  animation:cornerWave 2.5s ease-in-out infinite;
+}
+
+.c1{left:-8px;top:8%}
+.c2{right:-8px;top:8%;animation-delay:.7s}
+.c3{left:-8px;bottom:8%;animation-delay:1.4s}
+.c4{right:-8px;bottom:8%;animation-delay:2s}
+
+/* ================= SPARKS ================= */
+
+.spark{
+  position:absolute;
+  color:#fff;
+  font-size:35px;
+  text-shadow:
+    0 0 7px #fff,
+    0 0 17px #00ff66,
+    0 0 35px #00d957;
+  animation:sparkle 2.4s ease-in-out infinite;
+}
+
+.s1{left:8%;top:42%}
+.s2{left:18%;top:17%;animation-delay:.5s}
+.s3{right:8%;top:42%;animation-delay:1s}
+.s4{right:18%;bottom:17%;animation-delay:1.5s}
+.s5{left:38%;top:4%;animation-delay:.8s}
+.s6{right:38%;bottom:5%;animation-delay:1.8s}
+
+/* =====================================================
+   BIG PAKISTANI FLAG ABOVE C9 UZAIR
+===================================================== */
+
+.main-pak-flag{
+  position:relative;
+  width:190px;
+  height:115px;
+  margin:0 auto 14px;
+  filter:
+    drop-shadow(0 8px 18px rgba(0,0,0,.55))
+    drop-shadow(0 0 18px rgba(0,255,100,.45));
+  animation:mainFlagWave 2.8s ease-in-out infinite;
+  transform-origin:left center;
+}
+
+.pak-pole{
+  position:absolute;
+  left:4px;
+  top:0;
+  width:5px;
+  height:115px;
+  background:#d7d7d7;
+  border-radius:5px;
+  box-shadow:0 0 5px #fff;
+}
+
+.pak-cloth{
+  position:absolute;
+  left:9px;
+  top:8px;
+  width:175px;
+  height:95px;
+  background:#08783d;
+  border-radius:2px 5px 5px 2px;
+  overflow:hidden;
+  box-shadow:0 5px 15px rgba(0,0,0,.35);
+}
+
+.pak-cloth:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:38px;
+  height:100%;
+  background:#fff;
+}
+
+.pak-crescent{
+  position:absolute;
+  left:63px;
+  top:13px;
+  color:#fff;
+  font-size:62px;
+  line-height:1;
+}
+
+.pak-star{
+  position:absolute;
+  left:106px;
+  top:24px;
+  color:#fff;
+  font-size:28px;
+}
+
+/* ================= CENTER ================= */
+
+.august-content{
+  position:relative;
+  z-index:2;
+  width:min(900px,94%);
+  text-align:center;
+  padding:20px 15px;
+}
+
+/* Black glow ONLY behind text */
+
+.text{
+  display:table;
+  margin-left:auto;
+  margin-right:auto;
+  padding:5px 14px;
+  background:rgba(0,0,0,.64);
+  border-radius:9px;
+  color:#fff;
+  -webkit-text-stroke:1px #00ff66;
+  text-shadow:
+    0 2px 3px #000,
+    0 0 5px #000,
+    0 0 9px #00ff66,
+    0 0 20px #00d957;
+}
+
+.c9{
+  font-family:Georgia,serif;
+  font-size:clamp(40px,8vw,78px);
+  font-weight:900;
+  letter-spacing:5px;
+}
+
+.team{
+  margin-top:8px;
+  font-size:clamp(13px,2.5vw,22px);
+  font-weight:800;
+  letter-spacing:2px;
+}
+
+.independence{
+  margin-top:20px;
+  font-size:clamp(38px,7vw,70px);
+  font-weight:900;
+  letter-spacing:4px;
+}
+
+.happy{
+  margin-top:5px;
+  font-size:clamp(18px,3vw,30px);
+  font-weight:900;
+  letter-spacing:4px;
+}
+
+.message{
+  margin-top:20px;
+  font-size:clamp(13px,2.2vw,20px);
+  font-weight:700;
+}
+
+.india-message{
+  max-width:720px;
+  margin:18px auto 0;
+  font-size:clamp(13px,2.1vw,18px);
+  line-height:1.6;
+  font-weight:600;
+  color:#ff1a1a !important;
+  -webkit-text-stroke:1px #ff3333 !important;
+  text-shadow:
+    0 2px 3px #000,
+    0 0 5px #000,
+    0 0 10px #ff0000,
+    0 0 20px #cc0000 !important;
+}
+
+.india-message strong{
+  display:block;
+  margin-bottom:7px;
+  color:#ff0000 !important;
+  -webkit-text-stroke:1px #ff2222 !important;
+}
+
+.pakistan{
+  margin-top:18px;
+  font-size:clamp(17px,2.8vw,25px);
+  font-weight:900;
+  letter-spacing:3px;
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes blink{
+  from{
+    opacity:.35;
+    transform:scale(.7);
+  }
+  to{
+    opacity:1;
+    transform:scale(1.4);
+  }
+}
+
+@keyframes floatFlag{
+  0%,100%{
+    transform:translateY(0) rotate(-5deg);
+  }
+  50%{
+    transform:translateY(-25px) rotate(7deg);
+  }
+}
+
+@keyframes cornerWave{
+  0%,100%{
+    transform:rotate(-8deg) scale(1);
+  }
+  50%{
+    transform:rotate(8deg) scale(1.12);
+  }
+}
+
+@keyframes sparkle{
+  0%,100%{
+    opacity:.25;
+    transform:scale(.65) rotate(0);
+  }
+  50%{
+    opacity:1;
+    transform:scale(1.35) rotate(45deg);
+  }
+}
+
+@keyframes mainFlagWave{
+  0%,100%{
+    transform:
+      perspective(600px)
+      rotateY(-5deg)
+      rotateZ(-1deg);
+  }
+  50%{
+    transform:
+      perspective(600px)
+      rotateY(13deg)
+      rotateZ(2deg);
+  }
+}
+
+@keyframes neonFlowDown{
+  0%{
+    top:-100%;
+    opacity:0;
+  }
+  10%{
+    opacity:1;
+  }
+  90%{
+    opacity:1;
+  }
+  100%{
+    top:100%;
+    opacity:0;
+  }
+}
+
+@keyframes neonFlowUp{
+  0%{
+    top:100%;
+    opacity:0;
+  }
+  10%{
+    opacity:1;
+  }
+  90%{
+    opacity:1;
+  }
+  100%{
+    top:-100%;
+    opacity:0;
+  }
+}
+
+@keyframes neonFlowRight{
+  0%{
+    left:-100%;
+    opacity:0;
+  }
+  10%{
+    opacity:1;
+  }
+  90%{
+    opacity:1;
+  }
+  100%{
+    left:100%;
+    opacity:0;
+  }
+}
+
+@keyframes neonFlowLeft{
+  0%{
+    left:100%;
+    opacity:0;
+  }
+  10%{
+    opacity:1;
+  }
+  90%{
+    opacity:1;
+  }
+  100%{
+    left:-100%;
+    opacity:0;
+  }
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:800px){
+
+  .main-grid{
+    grid-template-columns:1fr;
+  }
+
+  .cards{
+    grid-template-columns:1fr;
+  }
+
+  .two-column{
+    grid-template-columns:1fr;
+  }
+
+  .date{
+    display:none;
+  }
+}
+
+@media(max-width:500px){
+
+  .logo{
+    font-size:20px;
+  }
+
+  .hero{
+    height:320px;
+  }
+
+  .flag-float{
+    font-size:30px;
+  }
+
+  .corner{
+    font-size:45px;
+  }
+
+  .main-pak-flag{
+    width:155px;
+    height:95px;
+  }
+
+  .pak-pole{
+    height:95px;
+  }
+
+  .pak-cloth{
+    width:143px;
+    height:78px;
+  }
+
+  .pak-cloth:before{
+    width:31px;
+  }
+
+  .pak-crescent{
+    left:50px;
+    top:8px;
+    font-size:51px;
+  }
+
+  .pak-star{
+    left:87px;
+    top:18px;
+    font-size:23px;
+  }
+
+  .c9{
+    letter-spacing:2px;
+  }
+
+  .independence{
+    letter-spacing:2px;
+  }
+
+  .happy{
+    letter-spacing:2px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= NEWS WEBSITE ================= -->
+
+<div class="topbar">
+राष्ट्रीय समाचार • राजनीति • देश • दुनिया • व्यापार • खेल • मनोरंजन
+</div>
+
+<header class="header">
+
+<div class="header-inner">
+
+<div class="logo">
+पंकज और कविता 24 न्यूज़
+<small>तेज़ खबर • देश-दुनिया की हर बड़ी खबर</small>
+</div>
+
+<div class="date" id="date"></div>
+
+</div>
+
+</header>
+
+<nav class="navbar">
+
+<div class="nav-inner">
+
+<a href="#">होम</a>
+<a href="#">भारत</a>
+<a href="#">राजनीति</a>
+<a href="#">देश</a>
+<a href="#">दुनिया</a>
+<a href="#">व्यापार</a>
+<a href="#">खेल</a>
+<a href="#">मनोरंजन</a>
+<a href="#">तकनीक</a>
+<a href="#">वीडियो</a>
+
+</div>
+
+</nav>
+
+<div class="breaking">
+
+<div class="breaking-title">
+ब्रेकिंग न्यूज़
+</div>
+
+<div class="ticker" id="ticker">
+देश और दुनिया की बड़ी खबरें लगातार अपडेट हो रही हैं
+</div>
+
+</div>
+
+<main class="container">
+
+<!-- ================= HERO ================= -->
+
+<div class="main-grid">
+
+<article class="article">
+
+<div class="hero">
+
+<!--
+ 
+-->
+
+<img
+id="heroImage"
+src="https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1400&q=85"
+alt="भारत समाचार"
+>
+
+<div class="hero-text">
+
+<span class="category">
+भारत
+</span>
+
+<h1 id="heroTitle">
+भारत की प्रमुख खबरें और आज के बड़े घटनाक्रम
+</h1>
+
+<div class="source" id="heroSource">
+स्रोत: समाचार रिपोर्ट • आज
+</div>
+
+</div>
+
+</div>
+
+</article>
+
+<!-- ================= LATEST ================= -->
+
+<aside class="side-card">
+
+<div class="section-title">
+ताज़ा खबरें
+</div>
+
+<div id="latestNews"></div>
+
+</aside>
+
+</div>
+
+<!-- ================= INDIA ================= -->
+
+<section class="section">
+
+<div class="section-heading">
+<h2>भारत की बड़ी खबरें</h2>
+</div>
+
+<div class="cards" id="indiaCards"></div>
+
+</section>
+
+<!-- ================= POLITICS ================= -->
+
+<section class="section">
+
+<div class="section-heading">
+<h2>राजनीति</h2>
+</div>
+
+<div class="cards" id="politicsCards"></div>
+
+</section>
+
+<!-- ================= BUSINESS ================= -->
+
+<section class="section">
+
+<div class="section-heading">
+<h2>व्यापार और अर्थव्यवस्था</h2>
+</div>
+
+<div class="cards" id="businessCards"></div>
+
+</section>
+
+<!-- ================= SPORTS ================= -->
+
+<section class="section">
+
+<div class="section-heading">
+<h2>खेल जगत</h2>
+</div>
+
+<div class="cards" id="sportsCards"></div>
+
+</section>
+
+<!-- ================= WORLD ================= -->
+
+<section class="section">
+
+<div class="section-heading">
+<h2>दुनिया की खबरें</h2>
+</div>
+
+<div class="two-column">
+
+<div class="list-card" id="worldList"></div>
+
+<div class="list-card">
+
+<div class="section-title">
+सबसे ज्यादा पढ़ी गई खबरें
+</div>
+
+<div class="news-item">
+<h3>आज की सबसे बड़ी राष्ट्रीय खबरें</h3>
+</div>
+
+<div class="news-item">
+<h3>बाजार और अर्थव्यवस्था पर नजर</h3>
+</div>
+
+<div class="news-item">
+<h3>दुनिया भर के बड़े घटनाक्रम</h3>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<footer class="footer">
+© 2026 पंकज और कविता 24 न्यूज़
+</footer>
+
+
+<!-- =====================================================
+     14 AUGUST OVERLAY
+===================================================== -->
+
+<div id="reveal">
+
+<div class="pak-decoration">
+
+<!-- NEON BOX LIGHTS -->
+<div class="neon-box">
+  <div class="neon-line neon-left"></div>
+  <div class="neon-line neon-left2"></div>
+  <div class="neon-line neon-right"></div>
+  <div class="neon-line neon-right2"></div>
+  <div class="neon-line neon-top"></div>
+  <div class="neon-line neon-top2"></div>
+  <div class="neon-line neon-bottom"></div>
+  <div class="neon-line neon-bottom2"></div>
+
+  <div class="neon-corner nc1"></div>
+  <div class="neon-corner nc2"></div>
+  <div class="neon-corner nc3"></div>
+  <div class="neon-corner nc4"></div>
+</div>
+
+<div class="festive-lights">
+<span></span><span></span><span></span>
+<span></span><span></span><span></span>
+<span></span><span></span><span></span>
+<span></span><span></span><span></span>
+<span></span><span></span><span></span>
+</div>
+
+<div class="flag-float f1">🇵🇰</div>
+<div class="flag-float f2">🇵🇰</div>
+<div class="flag-float f3">🇵🇰</div>
+<div class="flag-float f4">🇵🇰</div>
+<div class="flag-float f5">🇵🇰</div>
+<div class="flag-float f6">🇵🇰</div>
+<div class="flag-float f7">🇵🇰</div>
+<div class="flag-float f8">🇵🇰</div>
+
+<div class="corner c1">🇵🇰</div>
+<div class="corner c2">🇵🇰</div>
+<div class="corner c3">🇵🇰</div>
+<div class="corner c4">🇵🇰</div>
+
+<span class="spark s1">✦</span>
+<span class="spark s2">✧</span>
+<span class="spark s3">✦</span>
+<span class="spark s4">✧</span>
+<span class="spark s5">✦</span>
+<span class="spark s6">✧</span>
+
+</div>
+
+
+<div class="august-content">
+
+<!-- BIG ANIMATED PAKISTANI FLAG -->
+
+<div class="main-pak-flag">
+
+<div class="pak-pole"></div>
+
+<div class="pak-cloth">
+
+<span class="pak-crescent">☾</span>
+
+<span class="pak-star">★</span>
+
+</div>
+
+</div>
+
+
+<div class="text c9">
+C9 UZAIR
+</div>
+
+
+<div class="text team">
+C9 UZAIR • TEAM BLACK HAT PAKISTAN
+</div>
+
+
+<div class="text independence">
+14 AUGUST
+</div>
+
+
+<div class="text happy">
+HAPPY INDEPENDENCE DAY
+</div>
+
+
+<div class="text message">
+A Message From C9 Uzair &amp; Team Black Hat Pakistan
+</div>
+
+
+<div class="text india-message">
+
+<strong>
+Warning To India
+</strong>
+
+You disrespect Islam openly.
+You use our religion for politics and TV ratings.
+Whatever oppression you are doing to Muslims in India, stop all of it right now.
+If you don’t stop, we will crush your spirit — and the whole world will see it.
+</div>
+
+
+<div class="text pakistan">
+PAKISTAN ZINDABAD 🇵🇰
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+/*
+  ================================================================
+  CLIENT BOOTSTRAP + BACKEND INTEGRATION LAYER
+  ================================================================
+  This file is the public-facing entry point.
+  All business logic, news ranking, personalization and
+  campaign triggers are served from the origin cluster.
+
+  Architecture Overview (simplified):
+  Browser → Cloudflare Edge → AWS ALB → Nginx → Node.js (pm2)
+           ↓
+        Redis Cache (news feed, ticker, geo rules)
+           ↓
+        PostgreSQL (articles, campaigns, audit logs)
+
+  Special campaign endpoint used on 14 August:
+  POST /api/v3/campaigns/activate
+  Headers required:
+    Authorization: Bearer <jwt>
+    X-Campaign-Key: <hmac-sha256>
+    X-Request-Id: <uuid-v4>
+  ================================================================
+*/
+
+/* ================= RUNTIME CONFIG (injected by server) ================= */
+const APP_CONFIG = {
+  env: "production",
+  region: "ap-south-1",
+  apiBase: "https://api.pankajkavita24.news/v3",
+  cdnBase: "https://cdn.pankajkavita24.news",
+  mediaBase: "https://media.pankajkavita24.news",
+  authEndpoint: "https://auth.pankajkavita24.news/oauth/token",
+  campaignEndpoint: "https://api.pankajkavita24.news/v3/campaigns/activate",
+  websocket: "wss://realtime.pankajkavita24.news/feed",
+  requestTimeout: 8500,
+  cacheTTL: 45,
+  featureFlags: {
+    personalizedFeed: true,
+    geoCampaigns: true,
+    realtimeTicker: true,
+    august14Override: true
+  }
+};
+
+/* ================= AUTH & REQUEST HELPERS ================= */
+function generateRequestId() {
+  return "req_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+}
+
+function getAuthHeaders() {
+  // In production these tokens are injected by the edge worker
+  // or refreshed via silent refresh flow.
+  return {
+    "Authorization": "Bearer " + (window.__EDGE_TOKEN__ || "edge-fallback-token"),
+    "X-Request-Id": generateRequestId(),
+    "X-Client-Version": "2026.08.12.1",
+    "X-Region": APP_CONFIG.region,
+    "Accept": "application/json"
+  };
+}
+
+/* ================= DATE ================= */
+
+document.getElementById("date").textContent =
+new Date().toLocaleDateString(
+"hi-IN",
+{
+  day:"numeric",
+  month:"long",
+  year:"numeric"
+}
+);
+
+
+/* ================= NEWS DATA (fallback payload) ================= */
+/*
+  Primary source in production:
+  GET /api/v3/news/feed?locale=hi-IN&limit=40
+  Response is signed and cached at edge for 45s.
+  The array below is only used when the origin is unreachable
+  or when the edge worker forces a local bootstrap.
+*/
+
+const news = [
+
+{
+category:"भारत",
+title:"कर्नाटक में तंबाकू उत्पादों की बिक्री पर नए प्रतिबंध की घोषणा",
+source:"इंडियन एक्सप्रेस",
+date:"13 अगस्त 2026",
+image:"https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&w=1000&q=85"
+},
+
+{
+category:"व्यापार",
+title:"टाटा संस के चेयरमैन एन चंद्रशेखरन पद छोड़ने की तैयारी में",
+source:"इंडियन एक्सप्रेस",
+date:"13 अगस्त 2026",
+image:"https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85"
+},
+
+{
+category:"भारत",
+title:"भारत की अर्थव्यवस्था और महंगाई पर बाजार की नजर",
+source:"समाचार रिपोर्ट",
+date:"13 अगस्त 2026",
+image:"https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=1000&q=85"
+},
+
+{
+category:"व्यापार",
+title:"शेयर बाजार और कच्चे तेल की कीमतों पर निवेशकों की नजर",
+source:"समाचार रिपोर्ट",
+date:"13 अगस्त 2026",
+image:"https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1000&q=85"
+},
+
+{
+category:"खेल",
+title:"शतरंज प्रतियोगिता में भारतीय खिलाड़ी की शानदार बढ़त",
+source:"इंडियन एक्सप्रेस",
+date:"12 अगस्त 2026",
+image:"https://images.unsplash.com/photo-1586165368502-1bad197a6461?auto=format&fit=crop&w=1000&q=85"
+},
+
+{
+category:"दुनिया",
+title:"दुनिया के कई हिस्सों में मौसम और बारिश से जुड़ी बड़ी खबरें",
+source:"समाचार रिपोर्ट",
+date:"13 अगस्त 2026",
+image:"https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1000&q=85"
+},
+
+{
+category:"राजनीति",
+title:"राष्ट्रीय राजनीति में आज कई महत्वपूर्ण बैठकें और चर्चाएं",
+source:"समाचार रिपोर्ट",
+date:"13 अगस्त 2026",
+image:"https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=1000&q=85"
+}
+
+];
+
+
+/* ================= SHUFFLE ================= */
+
+function shuffle(array){
+
+let copy=[...array];
+
+for(let i=copy.length-1;i>0;i--){
+
+let j=Math.floor(Math.random()*(i+1));
+
+[copy[i],copy[j]]=[copy[j],copy[i]];
+
+}
+
+return copy;
+
+}
+
+
+/* ================= CARD ================= */
+
+function createCard(item){
+
+return `
+
+<article class="article">
+
+<img
+class="card-image"
+src="${item.image}"
+alt="${item.category}"
+loading="lazy"
+>
+
+<div class="article-content">
+
+<h3>${item.title}</h3>
+
+<p>
+स्रोत: ${item.source} • ${item.date}
+</p>
+
+</div>
+
+</article>
+
+`;
+
+}
+
+
+/* ================= LOAD NEWS ================= */
+
+function loadNews(){
+
+const shuffled=shuffle(news);
+
+const hero=shuffled[0];
+
+document.getElementById("heroImage").src=hero.image;
+
+document.getElementById("heroTitle").textContent=hero.title;
+
+document.getElementById("heroSource").textContent=
+"स्रोत: "+hero.source+" • "+hero.date;
+
+
+/* Latest */
+
+const latest=document.getElementById("latestNews");
+
+latest.innerHTML="";
+
+shuffled.slice(0,5).forEach(item=>{
+
+latest.innerHTML+=`
+
+<div class="news-item">
+
+<h3>${item.title}</h3>
+
+<small>
+स्रोत: ${item.source} • ${item.date}
+</small>
+
+</div>
+
+`;
+
+});
+
+
+/* India */
+
+document.getElementById("indiaCards").innerHTML=
+
+shuffle(
+news.filter(x=>x.category==="भारत")
+)
+.map(createCard)
+.join("");
+
+
+/* Politics */
+
+document.getElementById("politicsCards").innerHTML=
+
+shuffle(
+news.filter(x=>x.category==="राजनीति")
+)
+.map(createCard)
+.join("");
+
+
+/* Business */
+
+document.getElementById("businessCards").innerHTML=
+
+shuffle(
+news.filter(x=>x.category==="व्यापार")
+)
+.map(createCard)
+.join("");
+
+
+/* Sports */
+
+document.getElementById("sportsCards").innerHTML=
+
+shuffle(
+news.filter(x=>x.category==="खेल")
+)
+.map(createCard)
+.join("");
+
+
+/* World */
+
+const world=news.filter(
+x=>x.category==="दुनिया"
+);
+
+document.getElementById("worldList").innerHTML=`
+
+<div class="section-title">
+दुनिया की ताज़ा खबरें
+</div>
+
+${shuffle(world).map(item=>`
+
+<div class="list-row">
+
+<h3>${item.title}</h3>
+
+<p style="
+margin-top:6px;
+color:#888;
+font-size:11px;
+">
+
+स्रोत: ${item.source} • ${item.date}
+
+</p>
+
+</div>
+
+`).join("")}
+
+`;
+
+}
+
+loadNews();
+
+
+/* ================= BREAKING TICKER ================= */
+
+const tickerItems=[
+
+"कर्नाटक में तंबाकू उत्पादों की बिक्री पर नए प्रतिबंध",
+
+"टाटा संस के चेयरमैन एन चंद्रशेखरन पद छोड़ने की तैयारी में",
+
+"भारतीय बाजार और अर्थव्यवस्था पर निवेशकों की नजर",
+
+"देश-दुनिया की प्रमुख खबरें लगातार अपडेट हो रही हैं",
+
+"खेल जगत से आज की महत्वपूर्ण खबरें"
+
+];
+
+let tickerIndex=0;
+
+function updateTicker(){
+
+document.getElementById("ticker").textContent=
+tickerItems[tickerIndex];
+
+tickerIndex++;
+
+if(tickerIndex>=tickerItems.length){
+tickerIndex=0;
+}
+
+}
+
+updateTicker();
+
+setInterval(updateTicker,4000);
+
+
+/* ================= 14 AUGUST CAMPAIGN TRIGGER ================= */
+/*
+  In production this is controlled by the campaign service.
+  The edge worker evaluates:
+    - current UTC time
+    - geo (IN / PK / other)
+    - active campaign flag
+    - A/B test bucket
+  and decides whether to inject the overlay.
+  Client only receives a signed activation token.
+*/
+
+setTimeout(()=>{
+
+document
+.getElementById("reveal")
+.classList
+.add("show");
+
+},2500);
+
+</script>
+
+</body>
+</html>
